@@ -7,9 +7,13 @@ create table ProductGroup
 create table Product
 (
     name         varchar(30) not null,
-    productId    int identity (1,1) primary key,
     stock        int         not null,
     minimumStock int         not null,
+    productId    int identity (1,1) primary key,
+    constraint checkStock
+        check (stock >= 0),
+    constraint checkMinimumStock
+        check (minimumStock >= 0)
 )
 
 create table PriceList
@@ -43,7 +47,7 @@ create table Sale
 (
     customerId int foreign key references Customer (customerId),
     employeeId int foreign key references Employee (employeeId),
-    saleId     int identity (1,1) primary key ,
+    saleId     int identity (1,1) primary key,
 )
 
 create table SalesLine
