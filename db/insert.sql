@@ -40,11 +40,13 @@ values ('Spiritus'),
        ('Alkoholfri drikke')
 
 insert into Product
-values ('Klosterbryg', 30, 15),
-       ('Classic',400 , 100),
-       ('NEIPA',250 , 150),
-       ('Classic',400 , 200),
-       ('Classic',400 , 175)
+values ('Vodka Smirnoff', 30, 15, 1),
+       ('Classic',400 , 100, 3),
+       ('Coca Cola',250 , 150, 6),
+       ('Trøje',400 , 200, 5),
+       ('Chips',400 , 175, 2)
+
+
 
 
 

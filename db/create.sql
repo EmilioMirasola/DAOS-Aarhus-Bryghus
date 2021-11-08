@@ -9,6 +9,7 @@ create table Product
     name         varchar(30) not null,
     stock        int         not null,
     minimumStock int         not null,
+    productGroupId int foreign key references ProductGroup(productGroupId),
     productId    int identity (1,1) primary key,
     constraint checkStock
         check (stock >= 0),
