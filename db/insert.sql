@@ -54,8 +54,9 @@ values ('Fredagsbar'),
 insert into ProductPrice
 values (70, null, 1, 2)
 
---insert into ProductPrice
---values (70, 10, 1, 2)
+insert into ProductPrice
+values (70, 10, 2, 2)
+
 
 insert into Sale
 values (1, 1, '2021-11-09')
