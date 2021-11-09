@@ -47,4 +47,17 @@ from (select SUM((case
                join SalesLine SL on S.saleId = SL.saleId
                join ProductPrice PP on SL.productPriceId = PP.productPriceId
       where S.saleId = SL.saleId) as temp
+
 --2f
+select PG.name, MAX(price) as maxPrice
+from ProductGroup PG
+         join Product P on PG.productGroupId = P.productGroupId
+         join ProductPrice PP on P.productId = PP.productId
+group by PG.name
+
+--2g
+select PG.name productGroupName, P.name as productName, MAX(price) as maxPrice
+from ProductGroup PG
+         join Product P on PG.productGroupId = P.productGroupId
+         join ProductPrice PP on P.productId = PP.productId
+group by PG.name, P.name
