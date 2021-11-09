@@ -6,11 +6,11 @@ create table ProductGroup
 
 create table Product
 (
-    name         varchar(30) not null,
-    stock        int         not null,
-    minimumStock int         not null,
-    productGroupId int foreign key references ProductGroup(productGroupId),
-    productId    int identity (1,1) primary key,
+    name           varchar(30) not null,
+    stock          int         not null,
+    minimumStock   int         not null,
+    productGroupId int foreign key references ProductGroup (productGroupId),
+    productId      int identity (1,1) primary key,
     constraint checkStock
         check (stock >= 0),
     constraint checkMinimumStock
@@ -30,6 +30,10 @@ create table ProductPrice
     priceListId     int foreign key references PriceList (priceListId),
     productId       int foreign key references Product (productId),
     productPriceId  int identity (1,1) primary key,
+    constraint discountNot0
+        check (discountPercent != 0),
+    constraint discountNot100
+        check (discountPercent > 100),
 )
 
 create table Customer
@@ -48,6 +52,7 @@ create table Sale
 (
     customerId int foreign key references Customer (customerId),
     employeeId int foreign key references Employee (employeeId),
+    date       date,
     saleId     int identity (1,1) primary key,
 )
 
