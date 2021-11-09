@@ -47,7 +47,12 @@ values ('Vodka Smirnoff', 30, 15, 1),
        ('Chips',400 , 175, 2)
 
 
+insert into PriceList
+values ('Fredagsbar'),
+       ('butik')
 
+insert into ProductPrice
+values (70,0,1,2)
 
 
 
