@@ -45,7 +45,8 @@ values ('Vodka Smirnoff', 30, 15, 1),
        ('Pilsner', 400, 100, 3),
        ('Coca Cola', 250, 150, 6),
        ('Trøje', 400, 200, 5),
-       ('Chips', 400, 175, 2)
+       ('Chips', 400, 175, 2),
+       ('Fuglsang', 300, 100, 4)
 
 
 insert into PriceList
@@ -68,7 +69,7 @@ insert into SalesLine
 values (3, null, 2, 1)
 
 insert into Sale
-values(5, 5, '2021-11-09')
+values (5, 5, '2021-11-09')
 
 insert into SalesLine
-values(5, null, 2, 2)
+values (5, null, 2, 2)

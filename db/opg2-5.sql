@@ -28,7 +28,7 @@ having SUM(amount) > 5
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on P.productGroupId = PG.productGroupId
-except
+    except
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on PG.productGroupId = P.productGroupId
@@ -106,5 +106,95 @@ from saleview S
 where employeeId = S.employeeId
 group by employeeName
 order by employeeName
+
+
+--4.a
+
+create procedure printPriceList @priceListName as varchar(30)
+as
+select P.name                       as productName,
+       SUM((case
+
+                when discountPercent is not null then PP.price * (1 - (discountPercent / 100))
+                else PP.price end)) as price
+from PriceList
+         inner join ProductPrice PP on PriceList.priceListId = PP.priceListId
+         inner join Product P on PP.productId = P.productId
+where PriceList.name = @priceListName
+group by P.name
+
+    exec printPriceList 'butik'
+
+--4.b
+    create procedure addDiscountToAllProductsInProductGroup @productGroupName as varchar(30),
+                                                            @discountPercent as decimal(3, 1)
+    as
+
+
+-- 4.c
+
+        create procedure findEmployeeAndCustomers @name as varchar(30) as
+        select E.name as name
+        from Employee E
+        where E.name like @name + '%'
+        union
+        select C.name as name
+        from Customer C
+        where C.name like @name + '%'
+
+
+--5.a
+            create TRIGGER deleteProductGroup
+                on Product
+                after delete as
+                Declare
+                    @count as int
+                set @count = (select count(P.name)
+                              from Product P
+                                       inner join ProductGroup PG
+                                                  on P.productGroupId = (select productGroupId from deleted))
+                print @count
+                if (@count = 0)
+                    begin
+
+                        delete
+                        from ProductGroup
+                        where ProductGroup.productGroupId = (select productGroupId from deleted)
+
+                    end
+
+
+                delete product
+                where product.name = 'Fuglsang'
+
+
+
+
+--5.b
+create trigger reduceStock on SalesLine
+    after insert as
+    Declare @amount as int,
+        @productPriceId as int
+    set @amount = (select amount from inserted)
+    set @productPriceId = (select productPriceId from inserted)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
