@@ -9,7 +9,7 @@ create table Product
     name           varchar(30) not null,
     stock          int         not null,
     minimumStock   int         not null,
-    productGroupId int foreign key references ProductGroup (productGroupId),
+    productGroupId int         not null foreign key references ProductGroup (productGroupId),
     productId      int identity (1,1) primary key,
     constraint checkStock
         check (stock >= 0),
@@ -27,8 +27,8 @@ create table ProductPrice
 (
     price           float not null,
     discountPercent float,
-    priceListId     int foreign key references PriceList (priceListId),
-    productId       int foreign key references Product (productId),
+    priceListId     int   not null foreign key references PriceList (priceListId),
+    productId       int   not null foreign key references Product (productId),
     productPriceId  int identity (1,1) primary key,
     constraint checkDiscount
         check (discountPercent <= 100 and discountPercent > 0),
@@ -49,8 +49,8 @@ create table Employee
 create table Sale
 (
     customerId int foreign key references Customer (customerId),
-    employeeId int foreign key references Employee (employeeId),
-    date       date,
+    employeeId int  not null foreign key references Employee (employeeId),
+    date       date not null,
     saleId     int identity (1,1) primary key,
 )
 
@@ -58,9 +58,9 @@ create table SalesLine
 (
     amount         int not null,
     customPrice    float,
-    productPriceId int foreign key references ProductPrice (productPriceId),
-    saleId         int foreign key references Sale (saleId),
-    salesLineId    int identity (1,1) primary key ,
+    productPriceId int not null foreign key references ProductPrice (productPriceId),
+    saleId         int not null foreign key references Sale (saleId),
+    salesLineId    int identity (1,1) primary key,
 )
 
 

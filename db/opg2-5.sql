@@ -46,7 +46,8 @@ from (select SUM((case
       from Sale S
                join SalesLine SL on S.saleId = SL.saleId
                join ProductPrice PP on SL.productPriceId = PP.productPriceId
-      where S.saleId = SL.saleId) as temp
+      where S.saleId = SL.saleId
+      group by S.saleId) as temp
 
 --2f
 select PG.name, MAX(price) as maxPrice
@@ -74,7 +75,8 @@ from productgroup PG
 
 group by PG.name, P.name;
 
-select * from productview
+select *
+from productview
 
 -- 3.b
 create view saleview as
