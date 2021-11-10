@@ -163,29 +163,48 @@ group by P.name
 
                     end
 
-
+                -- Test for triggeren "deleteProductGroup"
                 delete product
                 where product.name = 'Fuglsang'
 
 
-
-
 --5.b
-create trigger reduceStock on SalesLine
-    after insert as
-    Declare @amount as int,
-        @productPriceId as int
-    set @amount = (select amount from inserted)
-    set @productPriceId = (select productPriceId from inserted)
+                create trigger reduceStock
+                    on SalesLine
+                    after insert as
+                    Declare
+                        @amount as         int,
+                        @productPriceId as int
+                    set @amount = (select amount
+                                   from inserted)
+                    set @productPriceId = (select productPriceId
+                                           from inserted)
+                    update Product
+                    set stock = stock - @amount
+                    where Product.productId = (select productId
+                                               from ProductPrice
+                                               where productPriceId = @productPriceId)
 
 
+--6.b
+                    create procedure getTotalSaleInDKKForASpeceficProduct @productName as varchar(30),
+                                                                          @date as date
+                    as
 
 
+                    select SUM((case
+                                    when customPrice is not null then customPrice
+                                    when discountPercent is not null
+                                        then SL.amount * price * (1 - (discountPercent / 100))
+                                    else SL.amount * price end)) as totalPrice
+                    from Sale S
+                             join SalesLine SL on S.saleId = SL.saleId and S.date = @date
+                             join ProductPrice PP on SL.productPriceId = PP.productPriceId
+                             join Product P on PP.productId = P.productId
+                    where P.name = @productName
 
 
-
-
-
+                        exec getTotalSaleInDKKForASpeceficProduct 'Classic', '2021-11-09'
 
 
 
