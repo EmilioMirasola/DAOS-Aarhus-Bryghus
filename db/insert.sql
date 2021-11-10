@@ -66,3 +66,9 @@ values (5, null, 2, 1)
 
 insert into SalesLine
 values (3, null, 2, 1)
+
+insert into Sale
+values(5, 5, '2021-11-09')
+
+insert into SalesLine
+values(5, null, 2, 2)
