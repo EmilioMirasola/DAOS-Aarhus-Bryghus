@@ -42,6 +42,7 @@ values ('Spiritus'),
 insert into Product
 values ('Vodka Smirnoff', 30, 15, 1),
        ('Classic', 400, 100, 3),
+       ('Pilsner', 400, 100, 3),
        ('Coca Cola', 250, 150, 6),
        ('Trøje', 400, 200, 5),
        ('Chips', 400, 175, 2)
@@ -56,6 +57,9 @@ values (70, null, 1, 2)
 
 insert into ProductPrice
 values (70, 10, 2, 2)
+
+insert into ProductPrice
+values (60, null, 2, 3)
 
 
 insert into Sale

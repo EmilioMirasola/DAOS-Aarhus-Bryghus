@@ -62,7 +62,7 @@ create table SalesLine
     customPrice    float,
     productPriceId int foreign key references ProductPrice (productPriceId),
     saleId         int foreign key references Sale (saleId),
-    salesLineId    int identity (1,1),
+    salesLineId    int identity (1,1) primary key ,
 )
 
 
