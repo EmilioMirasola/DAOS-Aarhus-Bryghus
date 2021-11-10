@@ -30,10 +30,8 @@ create table ProductPrice
     priceListId     int foreign key references PriceList (priceListId),
     productId       int foreign key references Product (productId),
     productPriceId  int identity (1,1) primary key,
-    constraint discountNot0
-        check (discountPercent != 0),
-    constraint discountNot100
-        check (discountPercent < 100 and discountPercent > 0),
+    constraint checkDiscount
+        check (discountPercent <= 100 and discountPercent > 0),
 )
 
 create table Customer
