@@ -5,7 +5,6 @@ public class Opgave_6b {
 
     public static void main(String[] args) {
 
-        // fix denne, så den fungere
         try {
             Repository.printProductGroups();
 
@@ -16,15 +15,19 @@ public class Opgave_6b {
 
             System.out.println("Indtast ID på det produkt du vil se det samlede salg for i DKK");
             int productId = ReadUtil.readInt();
+            ReadUtil.readLine();
 
-            System.out.println("Indtast dato");
+            System.out.println("Indtast dato (yyyy-mm-dd)");
             String date = ReadUtil.readLine();
 
             ResultSet totalSale = Repository.getTotalSaleInDKKForASpeceficProduct(productId, date);
             if (totalSale != null) {
-                while (totalSale.next()) {
-                    System.out.println("\nSamlet salg i DKK: " + totalSale.getString(1));
-                }
+                    while (totalSale.next()) {
+						if(totalSale.getString(1) == null) {
+							System.err.println("Denne er null, fordi der ikke er nogle salg på denne dato. Prøv 2021-11-09 :)");
+                        }
+                        System.out.println("\nSamlet salg i DKK: " + totalSale.getString(1));
+				}
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

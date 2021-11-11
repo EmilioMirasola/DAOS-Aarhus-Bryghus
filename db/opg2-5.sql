@@ -3,6 +3,7 @@ select P.name as produkt, price, discountPercent, PL.name as priceList
 from Product P
          join ProductPrice PP on P.productId = PP.productId
          join PriceList PL on PL.priceListId = PP.priceListId
+go;
 
 --2b
 select SUM(case
@@ -13,6 +14,7 @@ select SUM(case
 from SalesLine SL
          join ProductPrice PP on SL.productPriceId = PP.productPriceId
 where saleId = 1
+go;
 
 --2c
 select name, SUM(amount) as amount
@@ -23,6 +25,7 @@ from Product p
 where MONTH(date) = 11
 group by name
 having SUM(amount) > 5
+go;
 
 --2d
 select P.name as product, PG.name as productGroup
@@ -35,6 +38,7 @@ from Product P
          join ProductPrice PP on P.productId = PP.productId
          join PriceList PL on PL.priceListId = PP.priceListId
 where PL.name = 'Fredagsbar'
+go;
 
 --2e
 select AVG(temp.totalPrice) as average
@@ -48,6 +52,7 @@ from (select SUM((case
                join ProductPrice PP on SL.productPriceId = PP.productPriceId
       where S.saleId = SL.saleId
       group by S.saleId) as temp
+go;
 
 --2f
 select PG.name, MAX(price) as maxPrice
@@ -55,6 +60,7 @@ from ProductGroup PG
          join Product P on PG.productGroupId = P.productGroupId
          join ProductPrice PP on P.productId = PP.productId
 group by PG.name
+go;
 
 --2g
 select PG.name productGroupName, P.name as productName, MAX(price) as maxPrice
@@ -62,6 +68,7 @@ from ProductGroup PG
          join Product P on PG.productGroupId = P.productGroupId
          join ProductPrice PP on P.productId = PP.productId
 group by PG.name, P.name
+go;
 
 -- 3.a
 create view productview as
@@ -74,9 +81,11 @@ from productgroup PG
          left join Sale S on SL.saleId = S.saleId
 
 group by PG.name, P.name;
+go;
 
 select *
 from productview
+go;
 
 -- 3.b
 create view saleview as
@@ -96,14 +105,16 @@ from Sale S
          inner join SalesLine SL on S.saleId = SL.saleId
          inner join ProductPrice PP on SL.productPriceId = PP.productPriceId
 group by S.saleId, C.name, E.name, S.date, E.employeeId;
+go;
 
 select *
 from saleview
+go;
 
 --3.b query
 select employeeName, sum(totalPrice) as totalPrice
 from saleview S
-where employeeId = S.employeeId
+where 1 = S.employeeId
 group by employeeName
 order by employeeName
 
@@ -124,22 +135,23 @@ where PriceList.name = @priceListName
 group by P.name
 
     exec printPriceList 'butik'
+go;
 
-    --4.b
-    create procedure addDiscountToAllProductsInProductGroup @productGroupId as varchar(30),
-                                                            @discountPercent as decimal(3, 1)
-    as
-    begin
-        update ProductPrice
-        set discountPercent = @discountPercent
-        from Product P
-                 join ProductPrice PP on P.productId = PP.productId
-        where P.productGroupId = @productGroupId
-    end
+--4.b
+create procedure addDiscountToAllProductsInProductGroup @productGroupId as varchar(30),
+                                                        @discountPercent as decimal(3, 1)
+as
+begin
+    update ProductPrice
+    set discountPercent = @discountPercent
+    from Product P
+             join ProductPrice PP on P.productId = PP.productId
+    where P.productGroupId = @productGroupId
+end
 go;
 
 
-
+exec addDiscountToAllProductsInProductGroup 1, 2
 
 -- 4.c
 

@@ -1,8 +1,36 @@
+import javax.swing.text.html.Option;
 import java.sql.*;
 import java.util.Optional;
 
 public class Repository {
 
+	public static ResultSet getAllProductGroups() throws SQLException {
+		Optional<Connection> connection = getConnection();
+		if (connection.isPresent()) {
+			Statement stmt = connection.get().createStatement();
+			return stmt.executeQuery("select *  from ProductGroup");
+		} else {
+			return null;
+		}
+	}
+
+	public static Integer insertProduct(String productName, int stock, int minimumStock, int productGroupId) throws SQLException {
+		Optional<Connection> connection = getConnection();
+		if (connection.isPresent()) {
+			String createProduct = "insert into Product values(?,?,?,?)";
+			PreparedStatement statement = connection.get().prepareStatement(createProduct);
+			statement.setString(1, productName);
+			statement.setInt(2, stock);
+			statement.setInt(3, minimumStock);
+			statement.setInt(4, productGroupId);
+			try {
+				return statement.executeUpdate();
+			} catch (SQLException e) {
+				System.err.println("FEJL: " + e.getMessage());
+			}
+		}
+		return null;
+	}
 
 	public static void printProductGroups() throws SQLException {
 		Optional<Connection> connection = getConnection();
@@ -55,13 +83,10 @@ public class Repository {
 		if (connection.isPresent()) {
 			try {
 				Statement statement = connection.get().createStatement();
-				ResultSet resultset = statement.executeQuery("SELECT * FROM Sale");
-				return resultset;
+				return statement.executeQuery("SELECT * FROM Sale");
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println("FEJL: " + e.getMessage());
 			}
-
-
 		}
 
 		return null;
@@ -73,11 +98,10 @@ public class Repository {
 		if (connection.isPresent()) {
 			try {
 				Statement statement = connection.get().createStatement();
-				ResultSet resultset = statement.executeQuery("select price, discountPercent, productPriceId from ProductPrice");
 
-				return resultset;
+				return statement.executeQuery("select price, discountPercent, productPriceId from ProductPrice");
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println("FEJL: " + e.getMessage());
 			}
 
 
@@ -85,69 +109,73 @@ public class Repository {
 		return null;
 	}
 
-	public static Integer createSale(int amount, int productPriceId) {
+	public static Integer createSalesLine(int amount, int productPriceId, int saleId) {
 		Optional<Connection> connection = getConnection();
 
 		if (connection.isPresent()) {
-			String createSalesLine = "insert into SalesLine values(?,null,?,2)";
+			String createSalesLine = "insert into SalesLine values(?,null,?,?)";
 
 			try {
 				PreparedStatement statement = connection.get().prepareStatement(createSalesLine);
 				statement.setInt(1, amount);
 				statement.setInt(2, productPriceId);
+				statement.setInt(3, saleId);
 
 				return statement.executeUpdate();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println("FEJL: " + e.getMessage());
 				return null;
 			}
 		}
 		return null;
 	}
 
-
-
-	public static Integer createSaleWithCustomPrice(int amount, int productPriceId, float customPrice) {
+	public static Integer createSalesLineWithCustomPrice(int amount, int productPriceId, float customPrice, int saleId) {
 		Optional<Connection> connection = getConnection();
 
 		if (connection.isPresent()) {
-			String createSalesLine = "insert into SalesLine values(?,?,?,2)";
-
+			String createSalesLine = "insert into SalesLine values(?,?,?,?)";
 			try {
 				PreparedStatement statement = connection.get().prepareStatement(createSalesLine);
 				statement.setInt(1, amount);
 				statement.setFloat(2, customPrice);
 				statement.setInt(3, productPriceId);
+				statement.setInt(4, saleId);
 
 				return statement.executeUpdate();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.err.println("FEJL: " + e.getMessage());
 				return null;
 			}
 		}
 		return null;
 	}
 
-	public static Integer createSaleWithCustomPriceAndNewSale(int amount, int productPriceId, float customPrice) {
+	public static ResultSet checkStock(int productPriceId) {
 		Optional<Connection> connection = getConnection();
 
 		if (connection.isPresent()) {
-			String createSalesLine = "insert into SalesLine values(?,?,?,2)";
-
 			try {
-				PreparedStatement statement = connection.get().prepareStatement(createSalesLine);
-				statement.setInt(1, amount);
-				statement.setFloat(2, customPrice);
-				statement.setInt(3, productPriceId);
-
-				return statement.executeUpdate();
+				Statement statement = connection.get().createStatement();
+				return statement.executeQuery("SELECT * FROM stock_check(" + productPriceId + ")");
 			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
+				System.err.println("FEJL: " + e.getMessage());
 			}
 		}
 		return null;
 	}
 
 
+	public static ResultSet getProductStock(int productPriceId) {
+		Optional<Connection> connection = getConnection();
+		if (connection.isPresent()) {
+			try {
+				Statement statement = connection.get().createStatement();
+				return statement.executeQuery("SELECT distinct stock, minimumStock FROM Product join ProductPrice on Product.productId = ProductPrice.productId where productPriceId=" + productPriceId);
+			} catch (SQLException e) {
+				System.err.println("FEJL: " + e.getMessage());
+			}
+		}
+		return null;
+	}
 }
