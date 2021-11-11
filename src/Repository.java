@@ -1,4 +1,5 @@
 import javax.swing.text.html.Option;
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.Optional;
 
@@ -45,19 +46,13 @@ public class Repository {
 		System.out.println();
 	}
 
-	public static void printProducts(int id) throws SQLException {
+	public static ResultSet getProductsByProductGroup(int id) throws SQLException {
 		Optional<Connection> connection = getConnection();
 		if (connection.isPresent()) {
 			Statement stmt = connection.get().createStatement();
-			ResultSet result = stmt.executeQuery("select name, productId  from Product P where P.productGroupId =" + id);
-
-			System.out.println();
-			System.out.println("Produkter:");
-			while (result.next()) {
-				System.out.println(result.getString(1) + ", produktID: " + result.getInt(2));
-			}
-			System.out.println();
+			return stmt.executeQuery("select name, productId  from Product P where P.productGroupId =" + id);
 		}
+		return null;
 	}
 
 	public static ResultSet getTotalSaleInDKKForASpeceficProduct(int productId, String date) throws SQLException {
