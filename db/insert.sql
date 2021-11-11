@@ -79,3 +79,14 @@ values (5, null, 1, 2)
 
 insert into SalesLine
 values (300, null, 2, 2)
+
+update Product
+set stock = 400
+where name = 'Classic'
+
+
+
+
+
+
+

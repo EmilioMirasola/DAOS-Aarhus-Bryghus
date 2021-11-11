@@ -138,13 +138,7 @@ group by P.name
     end
 go;
 
-select *
-from ProductPrice
-execute setDiscountOnProductPricesByProductGroup 10, 3
-select *
-from ProductPrice
 
-drop proc setDiscountOnProductPricesByProductGroup
 
 
 -- 4.c
@@ -223,3 +217,17 @@ go;
 
 exec getTotalSaleInDKKForASpeceficProduct 2, '2021-11-09'
 drop proc getTotalSaleInDKKForASpeceficProduct
+
+
+--6.c
+
+create function stock_check(@productPriceId int)
+    returns table
+        as
+        return
+        select distinct stock, minimumStock
+        from Product P
+                 inner join ProductPrice PP on P.productId = PP.productId
+                 inner join SalesLine SL on PP.productPriceId = SL.productPriceId
+        where PP.productPriceId = @productPriceId
+go

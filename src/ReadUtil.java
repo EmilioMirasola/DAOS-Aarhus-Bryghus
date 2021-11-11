@@ -20,4 +20,9 @@ public class ReadUtil {
 	public static String readLine() {
 		return scanner.nextLine();
 	}
+
+	public static String readNext(){
+		return scanner.next();
+	}
+
 }
