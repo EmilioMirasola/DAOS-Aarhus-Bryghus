@@ -31,10 +31,10 @@ public class Opgave_6c {
 			}
 
 			System.out.println("Her er mulige priser, indtast productPriceId for at vælge en pris:");
-			ResultSet getAllPrices = Repository.getAllProductPrices();
-			if (getAllPrices != null) {
-				while (getAllPrices.next()) {
-					System.out.println("ProductPrideId: " + getAllPrices.getInt("productPriceId") + ", pris: " + getAllPrices.getInt("price") + ", rabat:  " + getAllPrices.getInt("discountPercent"));
+			ResultSet prices = Repository.getAllProductPrices();
+			if (prices != null) {
+				while (prices.next()) {
+					System.out.println("ProductPrideId: " + prices.getInt("productPriceId") + ", produkt: " + prices.getString("name") + ", pris: " + prices.getInt("price") + ", rabat:  " + prices.getInt("discountPercent"));
 				}
 			}
 			int productPriceId = ReadUtil.readInt();

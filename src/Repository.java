@@ -94,7 +94,7 @@ public class Repository {
 			try {
 				Statement statement = connection.get().createStatement();
 
-				return statement.executeQuery("select price, discountPercent, productPriceId from ProductPrice");
+				return statement.executeQuery("select name, price, discountPercent, productPriceId from ProductPrice join Product on Product.productId = ProductPrice.productId");
 			} catch (SQLException e) {
 				System.err.println("FEJL: " + e.getMessage());
 			}
