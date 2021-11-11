@@ -32,7 +32,7 @@ go;
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on P.productGroupId = PG.productGroupId
-    except
+except
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on PG.productGroupId = P.productGroupId
@@ -64,11 +64,15 @@ group by PG.name
 go;
 
 --2g
-select PG.name as productGroupName, P.name as productName, MAX(price) as maxPrice
-from ProductGroup PG
-         join Product P on PG.productGroupId = P.productGroupId
-         join ProductPrice PP on P.productId = PP.productId
-group by PG.name, P.name
+select temp.name, temp.price, Product.name as productName
+from (select PG.name, MAX(price) as price, PG.productGroupId
+      from ProductPrice PP
+               join Product P on PP.productId = P.productId
+               join ProductGroup PG on PG.productGroupId = P.productGroupId
+      group by PG.name, PG.productGroupId) as temp
+         join Product on Product.productGroupId = temp.productGroupId
+         join ProductPrice on Product.productId = ProductPrice.productId
+where temp.price = ProductPrice.price
 go;
 
 
