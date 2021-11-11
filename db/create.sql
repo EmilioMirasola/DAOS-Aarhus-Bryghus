@@ -1,3 +1,29 @@
+--Drop tables -- create tables er længere nede i denne fil:
+drop table SalesLine
+go
+
+drop table ProductPrice
+go
+
+drop table PriceList
+go
+
+drop table Product
+go
+
+drop table ProductGroup
+go
+
+drop table Sale
+go
+
+drop table Customer
+go
+
+drop table Employee
+go
+
+
 create table ProductGroup
 (
     name           varchar(30) not null unique,

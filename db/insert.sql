@@ -1,31 +1,6 @@
 -- noinspection SqlUnicodeStringLiteralForFile
 
 -- noinspection SpellCheckingInspectionForFile
--- drop tables: - Insert script down below
-
-drop table SalesLine
-go
-
-drop table ProductPrice
-go
-
-drop table PriceList
-go
-
-drop table Product
-go
-
-drop table ProductGroup
-go
-
-drop table Sale
-go
-
-drop table Customer
-go
-
-drop table Employee
-go
 
 
 insert into Customer
@@ -129,9 +104,7 @@ insert into SalesLine
 values (100, null, 11, 2)
 
 
-update Product
-set stock = 400
-where name = 'Classic'
+
 
 
 
