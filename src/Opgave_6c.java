@@ -30,7 +30,7 @@ public class Opgave_6c {
 				customPrice = ReadUtil.readInt();
 			}
 
-			System.out.println("Her er en række priser, indtast productPriceId for at vælge en pris:");
+			System.out.println("Her er mulige priser, indtast productPriceId for at vælge en pris:");
 			ResultSet getAllPrices = Repository.getAllProductPrices();
 			if (getAllPrices != null) {
 				while (getAllPrices.next()) {
@@ -39,13 +39,14 @@ public class Opgave_6c {
 			}
 			int productPriceId = ReadUtil.readInt();
 
+			Integer rowsAffected;
 			if (customPrice != null) {
-				Integer rowsAffected = Repository.createSalesLineWithCustomPrice(amount, productPriceId, customPrice, saleId);
-				System.out.println("Antal salgslinjer oprettet: " + rowsAffected);
+				rowsAffected = Repository.createSalesLineWithCustomPrice(amount, productPriceId, customPrice, saleId);
 			} else {
-				Integer rowsAffected = Repository.createSalesLine(amount, productPriceId, saleId);
-				System.out.println("Antal salg oprettet: " + rowsAffected);
+				rowsAffected = Repository.createSalesLine(amount, productPriceId, saleId);
 			}
+
+			System.out.println("Antal salgslinjer oprettet: " + rowsAffected);
 
 			Opgave_6c.checkStock(productPriceId);
 

@@ -133,9 +133,9 @@ from PriceList
          inner join Product P on PP.productId = P.productId
 where PriceList.name = @priceListName
 group by P.name
-
-    exec printPriceList 'butik'
 go;
+
+exec printPriceList 'butik'
 
 --4.b
 create procedure addDiscountToAllProductsInProductGroup @productGroupId as varchar(30),
@@ -186,10 +186,13 @@ create TRIGGER deleteProductGroup
 
         end
 
-    -- Test for triggeren "deleteProductGroup"
-    delete product
-    where product.name = 'Fuglsang'
 go;
+
+-- Test for triggeren "deleteProductGroup"
+delete product
+where product.name = 'Fuglsang'
+go;
+
 
 
 --5.b
