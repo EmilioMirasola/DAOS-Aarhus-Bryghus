@@ -3,6 +3,7 @@ select P.name as produkt, price, discountPercent, PL.name as priceList
 from Product P
          join ProductPrice PP on P.productId = PP.productId
          join PriceList PL on PL.priceListId = PP.priceListId
+group by P.name, PP.price, PP.discountPercent, PL.name
 go;
 
 --2b
@@ -31,7 +32,7 @@ go;
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on P.productGroupId = PG.productGroupId
-except
+    except
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on PG.productGroupId = P.productGroupId
@@ -63,12 +64,13 @@ group by PG.name
 go;
 
 --2g
-select PG.name productGroupName, P.name as productName, MAX(price) as maxPrice
+select PG.name as productGroupName, P.name as productName, MAX(price) as maxPrice
 from ProductGroup PG
          join Product P on PG.productGroupId = P.productGroupId
          join ProductPrice PP on P.productId = PP.productId
 group by PG.name, P.name
 go;
+
 
 -- 3.a
 create view productview as
@@ -82,6 +84,8 @@ from productgroup PG
 
 group by PG.name, P.name;
 go;
+
+drop view productview;
 
 select *
 from productview
@@ -107,6 +111,8 @@ from Sale S
 group by S.saleId, C.name, E.name, S.date, E.employeeId;
 go;
 
+drop view saleview;
+
 select *
 from saleview
 go;
@@ -114,7 +120,6 @@ go;
 --3.b query
 select employeeName, sum(totalPrice) as totalPrice
 from saleview S
-where 1 = S.employeeId
 group by employeeName
 order by employeeName
 
@@ -135,7 +140,9 @@ where PriceList.name = @priceListName
 group by P.name
 go;
 
+
 exec printPriceList 'butik'
+drop procedure printPriceList;
 
 --4.b
 create procedure addDiscountToAllProductsInProductGroup @productGroupId as varchar(30),
@@ -150,8 +157,9 @@ begin
 end
 go;
 
-
 exec addDiscountToAllProductsInProductGroup 1, 2
+
+drop procedure addDiscountToAllProductsInProductGroup;
 
 -- 4.c
 
@@ -165,6 +173,9 @@ from Customer C
 where C.name like @name + '%'
 go;
 
+findEmployeeAndCustomers 'l'
+
+drop procedure findEmployeeAndCustomers
 
 --5.a
 create TRIGGER deleteProductGroup
@@ -176,7 +187,6 @@ create TRIGGER deleteProductGroup
                   from Product P
                            inner join ProductGroup PG
                                       on P.productGroupId = (select productGroupId from deleted))
-    print @count
     if (@count = 0)
         begin
 
@@ -190,10 +200,10 @@ go;
 
 -- Test for triggeren "deleteProductGroup"
 delete product
-where product.name = 'Fuglsang'
-go;
+where product.name = 'Pasta'
 
 
+drop trigger deleteProductGroup
 
 --5.b
 create trigger reduceStock
@@ -212,6 +222,8 @@ create trigger reduceStock
                                from ProductPrice
                                where productPriceId = @productPriceId)
 go;
+
+drop trigger reduceStock
 
 
 --6.b
@@ -246,3 +258,5 @@ create function stock_check(@productPriceId int)
                  inner join SalesLine SL on PP.productPriceId = SL.productPriceId
         where PP.productPriceId = @productPriceId
 go
+
+drop function stock_check
