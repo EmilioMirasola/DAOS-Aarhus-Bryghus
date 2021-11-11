@@ -75,4 +75,7 @@ insert into SalesLine
 values (5, null, 2, 2)
 
 insert into SalesLine
+values (5, null, 1, 2)
+
+insert into SalesLine
 values (300, null, 2, 2)

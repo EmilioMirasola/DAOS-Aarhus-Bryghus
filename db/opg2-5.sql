@@ -28,7 +28,7 @@ having SUM(amount) > 5
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on P.productGroupId = PG.productGroupId
-    except
+except
 select P.name as product, PG.name as productGroup
 from Product P
          join ProductGroup PG on PG.productGroupId = P.productGroupId
@@ -125,86 +125,104 @@ group by P.name
 
     exec printPriceList 'butik'
 
---4.b
-    create procedure addDiscountToAllProductsInProductGroup @productGroupName as varchar(30),
+    --4.b
+    create procedure addDiscountToAllProductsInProductGroup @productGroupId as varchar(30),
                                                             @discountPercent as decimal(3, 1)
     as
+    begin
+        update ProductPrice
+        set discountPercent = @discountPercent
+        from Product P
+                 join ProductPrice PP on P.productId = PP.productId
+        where P.productGroupId = @productGroupId
+    end
+go;
+
+select *
+from ProductPrice
+execute setDiscountOnProductPricesByProductGroup 10, 3
+select *
+from ProductPrice
+
+drop proc setDiscountOnProductPricesByProductGroup
 
 
 -- 4.c
 
-        create procedure findEmployeeAndCustomers @name as varchar(30) as
-        select E.name as name
-        from Employee E
-        where E.name like @name + '%'
-        union
-        select C.name as name
-        from Customer C
-        where C.name like @name + '%'
+create procedure findEmployeeAndCustomers @name as varchar(30) as
+select E.name as name
+from Employee E
+where E.name like @name + '%'
+union
+select C.name as name
+from Customer C
+where C.name like @name + '%'
+go;
 
 
 --5.a
-            create TRIGGER deleteProductGroup
-                on Product
-                after delete as
-                Declare
-                    @count as int
-                set @count = (select count(P.name)
-                              from Product P
-                                       inner join ProductGroup PG
-                                                  on P.productGroupId = (select productGroupId from deleted))
-                print @count
-                if (@count = 0)
-                    begin
+create TRIGGER deleteProductGroup
+    on Product
+    after delete as
+    Declare
+        @count as int
+    set @count = (select count(P.name)
+                  from Product P
+                           inner join ProductGroup PG
+                                      on P.productGroupId = (select productGroupId from deleted))
+    print @count
+    if (@count = 0)
+        begin
 
-                        delete
-                        from ProductGroup
-                        where ProductGroup.productGroupId = (select productGroupId from deleted)
+            delete
+            from ProductGroup
+            where ProductGroup.productGroupId = (select productGroupId from deleted)
 
-                    end
+        end
 
-                -- Test for triggeren "deleteProductGroup"
-                delete product
-                where product.name = 'Fuglsang'
+    -- Test for triggeren "deleteProductGroup"
+    delete product
+    where product.name = 'Fuglsang'
+go;
 
 
 --5.b
-                create trigger reduceStock
-                    on SalesLine
-                    after insert as
-                    Declare
-                        @amount as         int,
-                        @productPriceId as int
-                    set @amount = (select amount
-                                   from inserted)
-                    set @productPriceId = (select productPriceId
-                                           from inserted)
-                    update Product
-                    set stock = stock - @amount
-                    where Product.productId = (select productId
-                                               from ProductPrice
-                                               where productPriceId = @productPriceId)
+create trigger reduceStock
+    on SalesLine
+    after insert as
+    Declare
+        @amount as         int,
+        @productPriceId as int
+    set @amount = (select amount
+                   from inserted)
+    set @productPriceId = (select productPriceId
+                           from inserted)
+    update Product
+    set stock = stock - @amount
+    where Product.productId = (select productId
+                               from ProductPrice
+                               where productPriceId = @productPriceId)
+go;
 
 
 --6.b
-                    create procedure getTotalSaleInDKKForASpeceficProduct @productName as varchar(30),
-                                                                          @date as date
-                    as
+create procedure getTotalSaleInDKKForASpeceficProduct @productName as varchar(30),
+                                                      @date as date
+as
+
+select SUM((case
+                when customPrice is not null then customPrice
+                when discountPercent is not null
+                    then SL.amount * price * (1 - (discountPercent / 100))
+                else SL.amount * price end)) as totalPrice
+from Sale S
+         join SalesLine SL on S.saleId = SL.saleId and S.date = @date
+         join ProductPrice PP on SL.productPriceId = PP.productPriceId
+         join Product P on PP.productId = P.productId
+where P.name = @productName
 
 
-                    select SUM((case
-                                    when customPrice is not null then customPrice
-                                    when discountPercent is not null
-                                        then SL.amount * price * (1 - (discountPercent / 100))
-                                    else SL.amount * price end)) as totalPrice
-                    from Sale S
-                             join SalesLine SL on S.saleId = SL.saleId and S.date = @date
-                             join ProductPrice PP on SL.productPriceId = PP.productPriceId
-                             join Product P on PP.productId = P.productId
-                    where P.name = @productName
-
-
-                        exec getTotalSaleInDKKForASpeceficProduct 'Classic', '2021-11-09'
+    exec getTotalSaleInDKKForASpeceficProduct 'Classic', '2021-11-09'
 
 
 
