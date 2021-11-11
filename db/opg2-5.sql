@@ -206,10 +206,9 @@ go;
 
 
 --6.b
-create procedure getTotalSaleInDKKForASpeceficProduct @productName as varchar(30),
+create procedure getTotalSaleInDKKForASpeceficProduct @productId as int,
                                                       @date as date
 as
-
 select SUM((case
                 when customPrice is not null then customPrice
                 when discountPercent is not null
@@ -219,19 +218,8 @@ from Sale S
          join SalesLine SL on S.saleId = SL.saleId and S.date = @date
          join ProductPrice PP on SL.productPriceId = PP.productPriceId
          join Product P on PP.productId = P.productId
-where P.name = @productName
+where P.productId = @productId
+go;
 
-
-    exec getTotalSaleInDKKForASpeceficProduct 'Classic', '2021-11-09'
-
-
-
-
-
-
-
-
-
-
-
-
+exec getTotalSaleInDKKForASpeceficProduct 2, '2021-11-09'
+drop proc getTotalSaleInDKKForASpeceficProduct
